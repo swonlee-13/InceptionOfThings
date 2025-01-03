@@ -1,0 +1,41 @@
+# This Ingress resource routes traffic to the app-one, app-two, and app-three services.
+# The Ingress controller is installed in the cluster to manage this resource and route
+# external traffic to the appropriate services. The Ingress rules below specify the hostnames
+# and the corresponding backend services (app-one, app-two, and app-three) to which the traffic
+# should be routed. Each service is exposed on port 80.
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: unified-apps-ingress
+spec:
+  rules:
+  - host: app1.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: app-one
+            port:
+              number: 80
+  - host: app2.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: app-two
+            port:
+              number: 80
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: app-three
+            port:
+              number: 80

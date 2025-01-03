@@ -1,0 +1,42 @@
+# This file contains the service definitions for the applications
+# app-one, app-two and app-three. Each service is defined with a
+# selector that matches the label of the corresponding deployment.
+# The services are exposed on port 80 and target port 8080.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one
+spec:
+  selector:
+    app: app-one
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-two
+spec:
+  selector:
+    app: app-two
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-three
+spec:
+  selector:
+    app: app-three
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

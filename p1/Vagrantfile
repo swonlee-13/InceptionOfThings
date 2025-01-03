@@ -1,0 +1,43 @@
+# Constants
+CPU = 1
+MEMORY = 1024
+IP_SERVER = "192.168.56.110"
+IP_WORKER = "192.168.56.111"
+ALPINE_VERSION = "319"
+BOX_VERSION = "4.3.12"
+
+# Start the Vagrant configuration block using version 2 of the configuration format
+Vagrant.configure("2") do |config|
+
+    # Loop to define the configuration for each VM
+    config.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--cpus", CPU]
+        vb.customize ["modifyvm", :id, "--memory", MEMORY]
+
+        # Enable linked clones to save disk space
+        vb.linked_clone = true
+    end
+
+    # Loop to define VM Configuration, one for the server and one for the worker and running the corresponding script
+    {"#{ENV['USER']}S" => IP_SERVER, "#{ENV['USER']}SW" => IP_WORKER}.each do |hostname, ip|
+
+    config.vm.define hostname do |vm_config|
+      vm_config.vm.box = "generic/alpine#{ALPINE_VERSION}"
+      vm_config.vm.box_version = BOX_VERSION
+      vm_config.vm.hostname = hostname
+
+      # Configure private network with static IP
+      vm_config.vm.network "private_network", ip: ip
+
+      vm_config.vm.provider "virtualbox" do |vb|
+        vb.name = hostname
+      end
+
+      # Determine which script to run based on the hostname
+      script_path = hostname.include?("SW") ? "./scripts/worker.sh" : "./scripts/server.sh"
+
+      # Run the script
+      vm_config.vm.provision "shell", path: script_path
+    end
+  end
+end
